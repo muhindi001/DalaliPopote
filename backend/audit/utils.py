@@ -1,6 +1,5 @@
 from .models import AuditLog
 
-
 def log_activity(request, action, details=None):
     AuditLog.objects.create(
         user=request.user,

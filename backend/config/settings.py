@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     "products",
     "customers",
     "payment_links",
+    "payments",
+    "transactions",
+    "invoices",
 ]
 
 MIDDLEWARE = [
