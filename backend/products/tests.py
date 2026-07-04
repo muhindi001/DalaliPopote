@@ -47,3 +47,93 @@ class ProductPermissionTests(TestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_login_returns_token_for_product_creation(self):
+        login_response = self.client.post(
+            "/api/auth/login/",
+            {
+                "username": "merchantuser",
+                "password": "strong-pass123",
+            },
+            format="json",
+        )
+
+        self.assertEqual(login_response.status_code, status.HTTP_200_OK)
+        self.assertIn("token", login_response.data)
+
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Token {login_response.data['token']}"
+        )
+        response = self.client.post(
+            "/api/products/",
+            {
+                "name": "Token Product",
+                "sku": "SKU456",
+                "price": "12.50",
+                "stock": 3,
+                "description": "Created via token auth",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_user_with_merchant_profile_can_create_product(self):
+        merchant_user = get_user_model().objects.create_user(
+            username="merchantprofile",
+            email="merchant-profile@example.com",
+            password="strong-pass123",
+            role="customer",
+        )
+        MerchantBusiness.objects.create(
+            merchant=merchant_user,
+            business_name="Profile Business",
+            business_email="merchant-profile@example.com",
+            phone="255700000001",
+            category="retail",
+            registration_number="REG456",
+            tax_number="TAX456",
+            annual_revenue="2000.00",
+            address="Profile Address",
+            city="Dodoma",
+            country="Tanzania",
+        )
+
+        self.client.force_authenticate(merchant_user)
+        response = self.client.post(
+            "/api/products/",
+            {
+                "name": "Profile Product",
+                "sku": "SKU789",
+                "price": "15.00",
+                "stock": 2,
+                "description": "Created via merchant profile",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_user_without_merchant_profile_can_create_product(self):
+        merchant_user = get_user_model().objects.create_user(
+            username="nomerchantprofile",
+            email="no-profile@example.com",
+            password="strong-pass123",
+            role="merchant",
+        )
+
+        self.client.force_authenticate(merchant_user)
+        response = self.client.post(
+            "/api/products/",
+            {
+                "name": "No Profile Product",
+                "sku": "SKU000",
+                "price": "10.00",
+                "stock": 1,
+                "description": "Auto-creates merchant profile",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(hasattr(merchant_user, "merchant_business"))

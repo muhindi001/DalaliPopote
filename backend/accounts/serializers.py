@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 
@@ -70,7 +71,10 @@ class EmailOrUsernameTokenObtainPairSerializer(TokenObtainPairSerializer):
                 "no_active_account",
             )
 
+        self.user = user
         data = self.user_token_payload(user)
+        token, _ = Token.objects.get_or_create(user=user)
+        data["token"] = token.key
         return data
 
     def get_user(self, identifier):

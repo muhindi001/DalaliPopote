@@ -11,4 +11,8 @@ class IsMerchant(BasePermission):
         if isinstance(role, str):
             role = role.lower()
 
-        return role in {"merchant", "merchant_user", "seller", "vendor"}
+        if role in {"merchant", "merchant_user", "seller", "vendor"}:
+            return True
+
+        merchant_business = getattr(request.user, "merchant_business", None)
+        return merchant_business is not None
