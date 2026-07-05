@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from invoices.services import create_invoice_from_transaction
 from payments.models import Payment
 from .models import Transaction
-
+from webhooks.events import dispatch_event
 
 @receiver(post_save, sender=Payment)
 def create_transaction_on_success(sender, instance, created, **kwargs):
@@ -30,3 +30,17 @@ def create_transaction_on_success(sender, instance, created, **kwargs):
 
     # Create invoice automatically
     create_invoice_from_transaction(transaction)  
+
+@receiver(post_save, sender=Transaction)
+def transaction_handler(sender, instance, created, **kwargs):
+
+    payload = {
+        "transaction_id": str(instance.id),
+        "payment_id": instance.payment.id,
+        "amount": str(instance.gross_amount),
+        "currency": instance.currency,
+        "status": instance.status,
+    }
+
+    if created:
+        dispatch_event(instance.merchant, "payment.success", payload)

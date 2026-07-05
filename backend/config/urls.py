@@ -25,13 +25,12 @@ urlpatterns = [
     path("api/customers/",include("customers.urls")),
     path("api/payment-links/", include("payment_links.urls")),
     path("api/audit/", include("audit.urls")),
-        # Payments (Phase 3)
     path("api/payments/", include("payments.urls")),
-
-    # Transactions (Phase 3)
     path("api/transactions/", include("transactions.urls")),
-
-    # Invoices (Phase 3)
     path("api/invoices/", include("invoices.urls")),
+    path("api/refunds/", include("refunds.urls")),
+    path("api/webhooks/", include("webhooks.urls")),
+    path("api/settlements/", include("settlements.urls")),
+    
     
 ]

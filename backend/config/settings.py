@@ -51,6 +51,9 @@ INSTALLED_APPS = [
     "payments",
     "transactions",
     "invoices",
+    "refunds",
+    "webhooks",
+    "settlements",
 ]
 
 MIDDLEWARE = [

@@ -1,8 +1,8 @@
 from django.apps import AppConfig
 
-class PaymentsConfig(AppConfig):
+class RefundsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "payments"
+    name = "refunds"
 
     def ready(self):
-        import payments.signals
+        import refunds.signals
