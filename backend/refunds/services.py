@@ -1,5 +1,5 @@
 from decimal import Decimal
-from django.db import transaction
+from django.db import models, transaction
 from django.utils import timezone
 
 from .models import Refund
