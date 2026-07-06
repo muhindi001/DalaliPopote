@@ -7,7 +7,7 @@ from .models import Refund
 class RefundSerializer(serializers.ModelSerializer):
 
     refund_reference = serializers.ReadOnlyField()
-    merchant = serializers.ReadOnlyField()
+    merchant = serializers.PrimaryKeyRelatedField(read_only=True)
     status = serializers.ReadOnlyField()
 
     class Meta:

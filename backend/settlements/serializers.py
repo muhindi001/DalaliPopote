@@ -5,7 +5,7 @@ from .models import Settlement
 
 class SettlementSerializer(serializers.ModelSerializer):
 
-    merchant = serializers.ReadOnlyField()
+    merchant = serializers.PrimaryKeyRelatedField(read_only=True)
     reference = serializers.ReadOnlyField()
     gross_amount = serializers.ReadOnlyField()
     platform_fee = serializers.ReadOnlyField()

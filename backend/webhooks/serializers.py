@@ -5,7 +5,7 @@ from .models import Webhook
 
 class WebhookSerializer(serializers.ModelSerializer):
 
-    merchant = serializers.ReadOnlyField()
+    merchant = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Webhook
